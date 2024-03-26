@@ -17,8 +17,8 @@
  * Description:       Custom WordPress functionality.
  * Version:           1.0.0
  * Requires PHP:      7.4
- * Author:            Misfist
- * Author URI:        https://github.com/misfist/site-functionality/
+ * Author:            Pea
+ * Author URI:        https://pealutz.me
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       site-functionality
