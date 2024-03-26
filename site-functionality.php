@@ -7,13 +7,13 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              https://github.com/misfist/site-functionality
+ * @link              https://github.com/misfist/rkc-plugin/
  * @since             1.0.0
  * @package           site-functionality
  *
  * @wordpress-plugin
  * Plugin Name:       Site Functionality
- * Plugin URI:        http://github.com/username/site-functionality/
+ * Plugin URI:        https://github.com/misfist/rkc-plugin/
  * Description:       Custom WordPress functionality.
  * Version:           1.0.0
  * Requires PHP:      7.4
@@ -24,7 +24,7 @@
  * Text Domain:       site-functionality
  * Domain Path:       /languages
  *
- * GitHub Plugin URI: https://github.com/misfist/site-functionality/
+ * GitHub Plugin URI: https://github.com/misfist/rkc-plugin/
  * Release Asset:     true
  */
 
