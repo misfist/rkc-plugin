@@ -27,8 +27,8 @@ class Paid_Memberships_Pro extends Base {
 			'access_level',
 			'course-category',
 			'lesson-tag',
-			'event-categories'
-		)
+			'event-categories',
+		),
 	);
 
 	/**
@@ -50,7 +50,7 @@ class Paid_Memberships_Pro extends Base {
 		/**
 		 * Add metaboxes to taxonomies
 		 */
-		foreach( $this->data['restricted_taxonomies'] as $taxonomy ) {
+		foreach ( $this->data['restricted_taxonomies'] as $taxonomy ) {
 			/**
 			 * @see https://developer.wordpress.org/reference/hooks/taxonomy_add_form_fields/
 			 */
@@ -84,30 +84,31 @@ class Paid_Memberships_Pro extends Base {
 		if ( empty( $post ) || empty( $post->ID ) ) {
 			return $has_access;
 		}
-	
+
 		$post_type = $post->post_type;
-	
+
 		if ( 'course' !== $post_type ) {
 			return $has_access;
 		}
-	
+
 		$taxonomies = $this->data['restricted_taxonomies'];
-	
+
 		$terms = wp_get_post_terms( $post->ID, $taxonomies, array( 'fields' => 'ids' ) );
-	
+
 		$restricted_terms = get_post_terms_with_levels( $terms, $post->ID );
 
-		var_dump( $restricted_terms, pmpro_getMembershipLevelForUser( $user->ID ) );
-	
+		$user_level = pmpro_getMembershipLevelForUser( $user->ID );
+
+		var_dump( $restricted_terms, pmpro_getMembershipLevelForUser( $user->ID ), $user_level && in_array( (int) $user_level->subscription_id, $restricted_terms_ids ) );
+
 		if ( ! empty( $restricted_terms ) ) {
 			$restricted_terms_ids = array_map( 'intval', wp_list_pluck( $restricted_terms, 'id' ) );
-			$user_level           = pmpro_getMembershipLevelForUser( $user->ID );
-	
+
 			$has_access = $user_level && in_array( (int) $user_level->subscription_id, $restricted_terms_ids );
 		} elseif ( empty( $post_membership_levels ) ) {
 			$has_access = true;
 		}
-	
+
 		return $has_access;
 	}
 
@@ -151,7 +152,6 @@ class Paid_Memberships_Pro extends Base {
 			$has_access = true;
 		}
 		var_dump( '$post_membership_levels', $post_membership_levels );
-
 
 		return $has_access;
 	}
