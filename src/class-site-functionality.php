@@ -14,6 +14,7 @@
 namespace Site_Functionality;
 
 use Site_Functionality\App\Admin\Admin_Assets;
+use Site_Functionality\App\Admin\Admin_Settings;
 use Site_Functionality\App\Frontend\Frontend_Assets;
 use Site_Functionality\Common\WP_Includes\I18n;
 use Site_Functionality\App\Custom_Fields\Custom_Fields;
@@ -109,6 +110,7 @@ class Site_Functionality {
 		$post_types    = new Post_Types( $this->settings );
 		$taxonomies    = new Taxonomies( $this->settings );
 		$custom_fields = new Custom_Fields( $this->settings );
+		$admin_settings = new Admin_Settings( $this->settings );
 
 		if( function_exists( '\pmpro_getMembershipLevelForUser' ) ) {
 			$pmpro = new Paid_Memberships_Pro( $this->settings  );

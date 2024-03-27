@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Site_Functionality\\App\\Admin\\Admin_Assets' => $baseDir . '/src/app/admin/class-admin-assets.php',
+    'Site_Functionality\\App\\Admin\\Admin_Settings' => $baseDir . '/src/app/admin/class-admin-settings.php',
     'Site_Functionality\\App\\Custom_Fields\\Custom_Fields' => $baseDir . '/src/app/custom-fields/class-custom-fields.php',
     'Site_Functionality\\App\\Frontend\\Frontend_Assets' => $baseDir . '/src/app/frontend/class-frontend-assets.php',
     'Site_Functionality\\App\\Integrations\\Paid_Memberships_Pro' => $baseDir . '/src/app/integrations/class-paid-memberships-pro.php',
