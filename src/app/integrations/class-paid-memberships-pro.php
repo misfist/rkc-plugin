@@ -97,7 +97,7 @@ class Paid_Memberships_Pro extends Base {
 	
 		$restricted_terms = get_post_terms_with_levels( $terms, $post->ID );
 
-		var_dump( $restricted_terms );
+		var_dump( $restricted_terms, pmpro_getMembershipLevelForUser( $user->ID ) );
 	
 		if ( ! empty( $restricted_terms ) ) {
 			$restricted_terms_ids = array_map( 'intval', wp_list_pluck( $restricted_terms, 'id' ) );
