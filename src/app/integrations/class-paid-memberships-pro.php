@@ -97,12 +97,9 @@ class Paid_Memberships_Pro extends Base {
 
 		$restricted_terms = get_post_terms_with_levels( $terms, $post->ID );
 
-		$user_level = pmpro_getMembershipLevelForUser( $user->ID );
-
-		var_dump( $restricted_terms, pmpro_getMembershipLevelForUser( $user->ID ), $user_level && in_array( (int) $user_level->subscription_id, $restricted_terms_ids ) );
-
 		if ( ! empty( $restricted_terms ) ) {
 			$restricted_terms_ids = array_map( 'intval', wp_list_pluck( $restricted_terms, 'id' ) );
+			$user_level = pmpro_getMembershipLevelForUser( $user->ID );
 
 			$has_access = $user_level && in_array( (int) $user_level->subscription_id, $restricted_terms_ids );
 		} elseif ( empty( $post_membership_levels ) ) {
@@ -140,8 +137,6 @@ class Paid_Memberships_Pro extends Base {
 		$terms = wp_get_post_terms( $post->ID, $taxonomy, array( 'fields' => 'ids' ) );
 
 		$restricted_terms = get_post_terms_with_levels( $terms, $post->ID );
-
-		var_dump( $terms );
 
 		if ( ! empty( $restricted_terms ) ) {
 			$restricted_terms_ids = array_map( 'intval', wp_list_pluck( $restricted_terms, 'id' ) );
