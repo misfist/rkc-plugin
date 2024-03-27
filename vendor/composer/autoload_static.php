@@ -37,6 +37,7 @@ class ComposerStaticInitd07cf14b73cf687bc00848c588fcffdd
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Site_Functionality\\App\\Admin\\Admin_Assets' => __DIR__ . '/../..' . '/src/app/admin/class-admin-assets.php',
+        'Site_Functionality\\App\\Admin\\Admin_Settings' => __DIR__ . '/../..' . '/src/app/admin/class-admin-settings.php',
         'Site_Functionality\\App\\Custom_Fields\\Custom_Fields' => __DIR__ . '/../..' . '/src/app/custom-fields/class-custom-fields.php',
         'Site_Functionality\\App\\Frontend\\Frontend_Assets' => __DIR__ . '/../..' . '/src/app/frontend/class-frontend-assets.php',
         'Site_Functionality\\App\\Integrations\\Paid_Memberships_Pro' => __DIR__ . '/../..' . '/src/app/integrations/class-paid-memberships-pro.php',
