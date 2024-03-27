@@ -101,7 +101,7 @@ class Paid_Memberships_Pro extends Base {
 			$restricted_terms_ids = array_map( 'intval', wp_list_pluck( $restricted_terms, 'id' ) );
 			$user_level = pmpro_getMembershipLevelForUser( $user->ID );
 
-			$has_access = $user_level && in_array( (int) $user_level->subscription_id, $restricted_terms_ids );
+			$has_access = $user_level && in_array( (int) $user_level->id, $restricted_terms_ids );
 		} elseif ( empty( $post_membership_levels ) ) {
 			$has_access = true;
 		}
