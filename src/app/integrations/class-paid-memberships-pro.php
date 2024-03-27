@@ -87,7 +87,7 @@ class Paid_Memberships_Pro extends Base {
 	
 		$post_type = $post->post_type;
 	
-		if ( 'course' !== $post_type && 'lesson' !== $post_type ) {
+		if ( 'course' !== $post_type ) {
 			return $has_access;
 		}
 	
@@ -96,6 +96,8 @@ class Paid_Memberships_Pro extends Base {
 		$terms = wp_get_post_terms( $post->ID, $taxonomies, array( 'fields' => 'ids' ) );
 	
 		$restricted_terms = get_post_terms_with_levels( $terms, $post->ID );
+
+		var_dump( $restricted_terms );
 	
 		if ( ! empty( $restricted_terms ) ) {
 			$restricted_terms_ids = array_map( 'intval', wp_list_pluck( $restricted_terms, 'id' ) );
