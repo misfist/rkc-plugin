@@ -1,22 +1,23 @@
-:editor-styles-wrapper {
-    --max-width: 1170px;
-}
 
 @media screen and ( min-width: 600px ) {
 
-    .editor-styles-wrapper .wp-block { 
-        width: 90%; 
-        max-width: var( --max-width ); 
-    }
+    .is-root-container { 
+        width: 90%;
+        margin-right: auto;
+        margin-left: auto;
+        max-width: var( --wp--style--global--content-size );
 
-    /* Width of "wide" blocks */
+        padding-right: var(--wp--style--root--padding-right);
+        padding-left: var(--wp--style--root--padding-left);
+    }
+    /**
+
     .editor-styles-wrapper .wp-block[data-align="wide"] { 
         max-width:  var( --max-width ); 
     }
 
-    /* Width of "full-wide" blocks */
     .editor-styles-wrapper .wp-block[data-align="full"] { 
         max-width: initial; 
     }
-
+    **/
 }

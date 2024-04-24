@@ -15,6 +15,7 @@ return array(
     'Site_Functionality\\App\\Post_Types\\Issue' => $baseDir . '/src/app/post-types/class-issue.php',
     'Site_Functionality\\App\\Post_Types\\Post_Types' => $baseDir . '/src/app/post-types/class-post-types.php',
     'Site_Functionality\\App\\Taxonomies\\Access_Level' => $baseDir . '/src/app/taxonomies/class-access-level.php',
+    'Site_Functionality\\App\\Taxonomies\\Media_Tag' => $baseDir . '/src/app/taxonomies/class-media-tag.php',
     'Site_Functionality\\App\\Taxonomies\\Taxonomies' => $baseDir . '/src/app/taxonomies/class-taxonomies.php',
     'Site_Functionality\\Common\\Abstracts\\Base' => $baseDir . '/src/common/abstracts/abstract-base.php',
     'Site_Functionality\\Common\\Abstracts\\Post_Type' => $baseDir . '/src/common/abstracts/abstract-post-type.php',
