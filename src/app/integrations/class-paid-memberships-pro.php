@@ -26,7 +26,6 @@ class Paid_Memberships_Pro extends Base {
 		'restricted_taxonomies' => array(
 			'access_level',
 			'course-category',
-			'lesson-tag',
 			'event-categories',
 		),
 	);
