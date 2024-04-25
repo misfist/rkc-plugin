@@ -65,6 +65,8 @@ class Paid_Memberships_Pro extends Base {
 		}
 
 		\add_filter( 'pmpro_has_membership_access_filter', array( $this, 'course_membership_access' ), 15, 4 );
+
+		\add_filter( 'pmpro_has_membership_access_filter', array( $this, 'event_membership_access' ), 15, 4 );
 	}
 
 	/**
@@ -98,7 +100,7 @@ class Paid_Memberships_Pro extends Base {
 
 		if ( ! empty( $restricted_terms ) ) {
 			$restricted_terms_ids = array_map( 'intval', wp_list_pluck( $restricted_terms, 'id' ) );
-			$user_level = pmpro_getMembershipLevelForUser( $user->ID );
+			$user_level           = pmpro_getMembershipLevelForUser( $user->ID );
 
 			$has_access = $user_level && in_array( (int) $user_level->id, $restricted_terms_ids );
 		} elseif ( empty( $post_membership_levels ) ) {
@@ -139,7 +141,7 @@ class Paid_Memberships_Pro extends Base {
 
 		if ( ! empty( $restricted_terms ) ) {
 			$restricted_terms_ids = array_map( 'intval', wp_list_pluck( $restricted_terms, 'id' ) );
-			$user_level = pmpro_getMembershipLevelForUser( $user->ID );
+			$user_level           = pmpro_getMembershipLevelForUser( $user->ID );
 
 			$has_access = $user_level && in_array( (int) $user_level->id, $restricted_terms_ids );
 		} elseif ( empty( $post_membership_levels ) ) {
