@@ -31,6 +31,7 @@ class Access_Level extends Taxonomy {
 		'post_types'        => array(
 			'event',
 			'course',
+			'lesson',
 			'module',
 			'post',
 			'page',
