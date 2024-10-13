@@ -112,7 +112,7 @@ class Paid_Memberships_Pro extends Base {
 	 * @param  array    $post_membership_levels
 	 * @return bool $has_access
 	 */
-	public function content_membership_access_membership_access( $has_access, $post, $user, $post_membership_levels ) : bool {
+	public function content_membership_access( $has_access, $post, $user, $post_membership_levels ) : bool {
 		if ( empty( $post ) || empty( $post->ID ) ) {
 			return $has_access;
 		}
