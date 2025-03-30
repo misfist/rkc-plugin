@@ -79,6 +79,12 @@ class Paid_Memberships_Pro extends Base {
 
 		// \add_filter( 'pmpro_has_membership_access_filter', array( $this, 'event_membership_access' ), 15, 4 );
 
+		/**
+		 * Addon Packages Post Types
+		 *
+		 * @link https://www.paidmembershipspro.com/add-ons/pmpro-purchase-access-to-a-single-page/
+		 */
+		\add_filter( 'pmproap_supported_post_types', $this->data['post_types'] );
 
 		/**
 		 * @see https://www.paidmembershipspro.com/assign-a-membership-level-to-a-wordpress-user-role/
