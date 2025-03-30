@@ -81,10 +81,12 @@ class Paid_Memberships_Pro extends Base {
 
 		/**
 		 * Addon Packages Post Types
+		 * 
+		 * @since 1.0.2
 		 *
 		 * @link https://www.paidmembershipspro.com/add-ons/pmpro-purchase-access-to-a-single-page/
 		 */
-		\add_filter( 'pmproap_supported_post_types', $this->data['post_types'] );
+		\add_filter( 'pmproap_supported_post_types', array( $this, 'addon_package_post_types' ) );
 
 		/**
 		 * @see https://www.paidmembershipspro.com/assign-a-membership-level-to-a-wordpress-user-role/
@@ -227,6 +229,21 @@ class Paid_Memberships_Pro extends Base {
 		}
 
 		return $has_access;
+	}
+
+	/**
+	 * Enable Addon Package for All Post Types
+	 * 
+	 * @link https://www.paidmembershipspro.com/add-ons/pmpro-purchase-access-to-a-single-page/
+	 * 
+	 * @since 1.0.2
+	 *
+	 * @param array $post_types
+	 * @return array
+	 */
+	public function addon_package_post_types( array $post_types ) : array {
+		$post_types = $this->data['post_types'];
+		return $post_types;
 	}
 
 	/**

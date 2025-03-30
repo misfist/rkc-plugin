@@ -15,7 +15,7 @@
  * Plugin Name:       Site Functionality
  * Plugin URI:        https://github.com/misfist/rkc-plugin/
  * Description:       Custom WordPress functionality.
- * Version:           1.0.1
+ * Version:           1.0.2
  * Requires PHP:      7.4
  * Author:            Pea
  * Author URI:        https://pealutz.me
