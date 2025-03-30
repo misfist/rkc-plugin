@@ -84,7 +84,7 @@ class Paid_Memberships_Pro extends Base {
 		 *
 		 * @link https://www.paidmembershipspro.com/add-ons/pmpro-purchase-access-to-a-single-page/
 		 */
-		// \add_filter( 'pmproap_supported_post_types', $this->data['post_types'] );
+		\add_filter( 'pmproap_supported_post_types', $this->data['post_types'] );
 
 		/**
 		 * @see https://www.paidmembershipspro.com/assign-a-membership-level-to-a-wordpress-user-role/
