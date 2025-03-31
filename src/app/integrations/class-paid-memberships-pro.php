@@ -73,6 +73,27 @@ class Paid_Memberships_Pro extends Base {
 			\add_action( "saved_{$taxonomy}", '\pmpro_term_saved' );
 		}
 
+		/**
+		 * Save MailChimp Add-on Options
+		 * 
+		 * @since 1.0.3
+		 */
+		$mailchimp_options = get_option( 'pmpromc_options' );
+		if ( ! empty( $mailchimp_options ) && isset( $mailchimp_options['additional_lists'] ) && ! empty( $mailchimp_options['additional_lists'] ) ) {
+			$this->data['mailchimp_lists'] = $mailchimp_options['additional_lists'];
+		} else {
+			$this->data['mailchimp_lists'] = array();
+		}
+
+		/**
+		 * Filter Checkout Page Link
+		 * 
+		 * @since 1.0.3
+		 */
+		if( function_exists( '\pmpromc_options_page' ) && ! empty( $this->data['mailchimp_lists'] ) ) {
+			add_filter( 'page_link', array( $this, 'mailchimp_optin_default' ), 11, 3 );
+		}
+
 		\add_filter( 'pmpro_has_membership_access_filter', array( $this, 'content_membership_access' ), 15, 4 );
 
 		// \add_filter( 'pmpro_has_membership_access_filter', array( $this, 'course_membership_access' ), 15, 4 );
@@ -244,6 +265,33 @@ class Paid_Memberships_Pro extends Base {
 	public function addon_package_post_types( array $post_types ) : array {
 		$post_types = $this->data['post_types'];
 		return $post_types;
+	}
+
+	/**
+	 * Modify Checkout Page Link
+	 * Append Checkout page link with query args that will select MailChimp list opt-in by default.
+	 * 
+	 * @link https://developer.wordpress.org/reference/hooks/page_link/
+	 * @link https://www.paidmembershipspro.com/add-ons/pmpro-mailchimp-integration/
+	 * @link https://developer.wordpress.org/reference/functions/add_query_arg/
+	 * 
+	 * @since 1.0.3
+	 *
+	 * @param string $link
+	 * @param integer $post_id
+	 * @param boolean $sample
+	 * @return string $link
+	 */
+	public function mailchimp_optin_default( string $link, int $post_id, bool $sample ) : string {
+		$checkout_page = (int) get_option( 'pmpro_checkout_page_id' );
+
+		if( $checkout_page && $checkout_page === $post_id ) {
+			$args = array(
+				'additional_lists' => $this->data['mailchimp_lists']
+			);
+			$link = add_query_arg( $args, $link );
+		}
+		return $link;
 	}
 
 	/**
