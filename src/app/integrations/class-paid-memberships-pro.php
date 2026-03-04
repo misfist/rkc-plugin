@@ -434,7 +434,7 @@ class Paid_Memberships_Pro extends Base {
 
 	/**
 	 * Add custom filter options to the members list dropdown.
-	 * 
+	 *
 	 * @since 1.0.4
 	 *
 	 * @param string $which The position of the nav (top or bottom).
@@ -454,7 +454,7 @@ class Paid_Memberships_Pro extends Base {
 
 	/**
 	 * Filter the members list SQL for custom active and paid filters.
-	 * 
+	 *
 	 * @since 1.0.4
 	 *
 	 * @param string $sql The SQL query.
@@ -507,7 +507,7 @@ class Paid_Memberships_Pro extends Base {
 
 	/**
 	 * Remove pending members from the Active and Paid Members list filters.
-	 * 
+	 *
 	 * @since 1.0.4
 	 *
 	 * @param object $user The current user object.
@@ -539,7 +539,7 @@ class Paid_Memberships_Pro extends Base {
 
 	/**
 	 * Enqueue scripts for the members list page.
-	 * 
+	 *
 	 * @since 1.0.4
 	 *
 	 * @param string $hook The current admin page hook.
@@ -574,7 +574,7 @@ class Paid_Memberships_Pro extends Base {
 
 	/**
 	 * Add an "Approval Status" column header to the PMPro Members List.
-	 * 
+	 *
 	 * @since 1.0.4
 	 *
 	 * @param array $columns Existing extra columns.
@@ -613,10 +613,13 @@ class Paid_Memberships_Pro extends Base {
 
 		if ( \PMPro_Approvals::isApproved( $user_id, $level_id ) ) {
 			$status = 'approved';
+			$class  = 'success';
 		} elseif ( \PMPro_Approvals::isPending( $user_id, $level_id ) ) {
 			$status = 'pending';
+			$class  = 'pending';
 		} else {
 			$status = 'denied';
+			$class  = 'error';
 		}
 
 		$labels = array(
@@ -625,26 +628,11 @@ class Paid_Memberships_Pro extends Base {
 			'denied'   => __( 'Denied', 'site-functionality' ),
 		);
 
-		$bg_colors = array(
-			'pending'  => 'var(--pmpro--color--alert-background)',
-			'approved' => 'var(--pmpro--color--success-background)',
-			'denied'   => 'var(--pmpro--color--error-background)',
-		);
-
-		$text_colors = array(
-			'pending'  => 'var(--pmpro--color--alert-text)',
-			'approved' => 'var(--pmpro--color--success-text)',
-			'denied'   => 'var(--pmpro--color--error-text)',
-		);
-
 		$label      = isset( $labels[ $status ] ) ? $labels[ $status ] : esc_html( $status );
-		$bg_color   = isset( $bg_colors[ $status ] ) ? $bg_colors[ $status ] : 'var(--pmpro--color--almost-black)';
-		$text_color = isset( $text_colors[ $status ] ) ? $text_colors[ $status ] : 'var(--pmpro--color--almost-black)';
 
 		printf(
-			'<span style="display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;color:%s;background:%s;">%s</span>',
-			esc_attr( $text_color ),
-			esc_attr( $bg_color ),
+			'<span class="pmpro_order-status pmpro_order-status-%s">%s</span>',
+			esc_attr( $class ),
 			esc_html( $label )
 		);
 	}
