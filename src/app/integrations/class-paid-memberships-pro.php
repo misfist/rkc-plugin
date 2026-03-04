@@ -71,11 +71,12 @@ class Paid_Memberships_Pro extends Base {
 			 * @see https://developer.wordpress.org/reference/hooks/saved_taxonomy/
 			 */
 			\add_action( "saved_{$taxonomy}", '\pmpro_term_saved' );
+
 		}
 
 		/**
 		 * Save MailChimp Add-on Options
-		 * 
+		 *
 		 * @since 1.0.3
 		 */
 		$mailchimp_options = get_option( 'pmpromc_options' );
@@ -87,10 +88,10 @@ class Paid_Memberships_Pro extends Base {
 
 		/**
 		 * Filter Checkout Page Link
-		 * 
+		 *
 		 * @since 1.0.3
 		 */
-		if( function_exists( '\pmpromc_options_page' ) && ! empty( $this->data['mailchimp_lists'] ) ) {
+		if ( function_exists( '\pmpromc_options_page' ) && ! empty( $this->data['mailchimp_lists'] ) ) {
 			add_filter( 'page_link', array( $this, 'mailchimp_optin_default' ), 11, 3 );
 		}
 
@@ -102,7 +103,7 @@ class Paid_Memberships_Pro extends Base {
 
 		/**
 		 * Addon Packages Post Types
-		 * 
+		 *
 		 * @since 1.0.2
 		 *
 		 * @link https://www.paidmembershipspro.com/add-ons/pmpro-purchase-access-to-a-single-page/
@@ -112,9 +113,9 @@ class Paid_Memberships_Pro extends Base {
 		/**
 		 * @see https://www.paidmembershipspro.com/assign-a-membership-level-to-a-wordpress-user-role/
 		 */
-		\add_action( 'set_user_role', array( $this, 'set_wp_user_role' ), 10, 3 );
+		// \add_action( 'set_user_role', array( $this, 'set_wp_user_role' ), 10, 3 );
 
-		if( class_exists( '\PMPRO_Roles' ) ) {
+		if ( class_exists( '\PMPRO_Roles' ) ) {
 			/**
 			 *
 			 * @see https://www.paidmembershipspro.com/add-ons/approval-process-membership
@@ -125,12 +126,22 @@ class Paid_Memberships_Pro extends Base {
 
 			\add_action( 'pmpro_approvals_after_reset_member', array( $this, 'after_reset_member' ), '', 2 );
 		}
+
+		if ( class_exists( '\PMPro_Approvals' ) ) {
+			/**
+			 * @see https://www.paidmembershipspro.com/add-ons/approval-process-membership/
+			 * 
+			 * @since 1.0.4
+			 */
+			add_filter( 'pmpro_memberslist_extra_cols', array( $this, 'approval_col_header' ) );
+			add_action( 'pmpro_manage_memberslist_custom_column', array( $this, 'approval_col_body' ), 10, 3 );
+		}
 	}
 
 	/**
 	 * Filter Course Access
 	 * Modify access to course based on term
-	 * 
+	 *
 	 * @since 1.0.1
 	 *
 	 * @link https://www.paidmembershipspro.com/hook/pmpro_has_membership_access_filter_post_type/
@@ -141,7 +152,7 @@ class Paid_Memberships_Pro extends Base {
 	 * @param  array    $post_membership_levels
 	 * @return bool $has_access
 	 */
-	public function content_membership_access( $has_access, $post, $user, $post_membership_levels ) : bool {
+	public function content_membership_access( $has_access, $post, $user, $post_membership_levels ): bool {
 		if ( empty( $post ) || empty( $post->ID ) ) {
 			return $has_access;
 		}
@@ -182,7 +193,7 @@ class Paid_Memberships_Pro extends Base {
 	 * @param  array    $post_membership_levels
 	 * @return bool $has_access
 	 */
-	public function course_membership_access( $has_access, $post, $user, $post_membership_levels ) : bool {
+	public function course_membership_access( $has_access, $post, $user, $post_membership_levels ): bool {
 		if ( empty( $post ) || empty( $post->ID ) ) {
 			return $has_access;
 		}
@@ -223,7 +234,7 @@ class Paid_Memberships_Pro extends Base {
 	 * @param  array    $post_membership_levels
 	 * @return bool $has_access
 	 */
-	public function event_membership_access( $has_access, $post, $user, $post_membership_levels ) : bool {
+	public function event_membership_access( $has_access, $post, $user, $post_membership_levels ): bool {
 		if ( empty( $post ) || empty( $post->ID ) ) {
 			return $has_access;
 		}
@@ -254,15 +265,15 @@ class Paid_Memberships_Pro extends Base {
 
 	/**
 	 * Enable Addon Package for All Post Types
-	 * 
+	 *
 	 * @link https://www.paidmembershipspro.com/add-ons/pmpro-purchase-access-to-a-single-page/
-	 * 
+	 *
 	 * @since 1.0.2
 	 *
 	 * @param array $post_types
 	 * @return array
 	 */
-	public function addon_package_post_types( array $post_types ) : array {
+	public function addon_package_post_types( array $post_types ): array {
 		$post_types = $this->data['post_types'];
 		return $post_types;
 	}
@@ -270,24 +281,24 @@ class Paid_Memberships_Pro extends Base {
 	/**
 	 * Modify Checkout Page Link
 	 * Append Checkout page link with query args that will select MailChimp list opt-in by default.
-	 * 
+	 *
 	 * @link https://developer.wordpress.org/reference/hooks/page_link/
 	 * @link https://www.paidmembershipspro.com/add-ons/pmpro-mailchimp-integration/
 	 * @link https://developer.wordpress.org/reference/functions/add_query_arg/
-	 * 
+	 *
 	 * @since 1.0.3
 	 *
-	 * @param string $link
+	 * @param string  $link
 	 * @param integer $post_id
 	 * @param boolean $sample
 	 * @return string $link
 	 */
-	public function mailchimp_optin_default( string $link, int $post_id, bool $sample ) : string {
+	public function mailchimp_optin_default( string $link, int $post_id, bool $sample ): string {
 		$checkout_page = (int) get_option( 'pmpro_checkout_page_id' );
 
-		if( $checkout_page && $checkout_page === $post_id ) {
+		if ( $checkout_page && $checkout_page === $post_id ) {
 			$args = array(
-				'additional_lists' => $this->data['mailchimp_lists']
+				'additional_lists' => $this->data['mailchimp_lists'],
 			);
 			$link = add_query_arg( $args, $link );
 		}
@@ -296,6 +307,7 @@ class Paid_Memberships_Pro extends Base {
 
 	/**
 	 * Assign a level to role
+	 * Assign role to admin users
 	 *
 	 * @see https://www.paidmembershipspro.com/create-a-plugin-for-pmpro-customizations/
 	 *
@@ -304,7 +316,7 @@ class Paid_Memberships_Pro extends Base {
 	 * @param  array  $old_roles
 	 * @return void
 	 */
-	public function set_wp_user_role( $user_id, $role, $old_roles ) : void {
+	public function set_wp_user_role( $user_id, $role, $old_roles ): void {
 		$member_roles = array(
 			'pmpro_approver',
 			'pmpro_membership_manager',
@@ -324,29 +336,29 @@ class Paid_Memberships_Pro extends Base {
 	/**
 	 * Update User Roles
 	 * If member is approved, update user's roles
-	 * 
+	 *
 	 * @see https://www.paidmembershipspro.com/add-ons/approval-process-membership
 	 *
 	 * @param  int $user_id
 	 * @param  int $level_id
 	 * @return void
 	 */
-	public function after_approve_member( $user_id, $level_id ) : void {
+	public function after_approve_member( $user_id, $level_id ): void {
 		$user = new \WP_User( $user_id );
 		if ( $user ) {
 			$user->remove_role( 'pending' );
 			$user->remove_role( 'subscriber' );
 
 			$roles = \PMPRO_Roles::get_roles_for_level( $level_id );
-			if( is_array( $roles ) && ! empty( $roles ) ) {
-				foreach( $roles as $role_key => $role_name ) {
+			if ( is_array( $roles ) && ! empty( $roles ) ) {
+				foreach ( $roles as $role_key => $role_name ) {
 					$user->add_role( $role_key );
 				}
 			}
 
 			$bbp = \bbpress();
 
-			if( function_exists( '\bbp_set_user_role' ) ) {
+			if ( function_exists( '\bbp_set_user_role' ) ) {
 				bbp_set_user_role( $user_id, 'participant' );
 			}
 		}
@@ -355,20 +367,27 @@ class Paid_Memberships_Pro extends Base {
 	/**
 	 * Update WP User Role
 	 * If member is denied, update user's roles
-	 * 
+	 *
 	 * @see https://www.paidmembershipspro.com/add-ons/approval-process-membership
 	 *
 	 * @param  int $user_id
 	 * @param  int $level_id
 	 * @return void
 	 */
-	public function after_deny_member( $user_id, $level_id ) : void {
+	public function after_deny_member( $user_id, $level_id ): void {
 		$user = new \WP_User( $user_id );
 		if ( $user ) {
-			$user->set_role( 'subscriber' );
+			$roles = \PMPRO_Roles::get_roles_for_level( $level_id );
+			if ( is_array( $roles ) && ! empty( $roles ) ) {
+				foreach ( $roles as $role_key => $role_name ) {
+					$user->remove_role( $role_key );
+				}
+			}
 
-			if( function_exists( '\bbp_set_user_role' ) ) {
-				bbp_set_user_role( $user_id, '' );
+			$user->set_role( 'denied' );
+
+			if ( function_exists( '\bbp_set_user_role' ) ) {
+				bbp_set_user_role( $user_id, 'bbp_blocked' );
 			}
 		}
 	}
@@ -376,20 +395,20 @@ class Paid_Memberships_Pro extends Base {
 	/**
 	 * Update User Roles
 	 * If member is pending, update user's roles
-	 * 
+	 *
 	 * @see https://www.paidmembershipspro.com/add-ons/approval-process-membership
 	 *
 	 * @param  int $user_id
 	 * @param  int $level_id
 	 * @return void
 	 */
-	public function after_reset_member( $user_id, $level_id ) : void {
+	public function after_reset_member( $user_id, $level_id ): void {
 		$user = new \WP_User( $user_id );
 		if ( $user ) {
 
 			$roles = \PMPRO_Roles::get_roles_for_level( $level_id );
-			if( is_array( $roles ) && ! empty( $roles ) ) {
-				foreach( $roles as $role_key => $role_name ) {
+			if ( is_array( $roles ) && ! empty( $roles ) ) {
+				foreach ( $roles as $role_key => $role_name ) {
 					$user->add_role( $role_key );
 				}
 			}
@@ -398,10 +417,84 @@ class Paid_Memberships_Pro extends Base {
 			$user->remove_role( 'member' );
 			$user->add_role( 'pending' );
 
-			if( function_exists( '\bbp_set_user_role' ) ) {
+			if ( function_exists( '\bbp_set_user_role' ) ) {
 				bbp_set_user_role( $user_id, 'spectator' );
 			}
 		}
 	}
 
+	/**
+	 * Add an "Approval Status" column header to the PMPro Members List.
+	 *
+	 * @param array $columns Existing extra columns.
+	 * @return array
+	 */
+	public function approval_col_header( array $columns ): array {
+		$columns['approval_status'] = __( 'Approval Status', 'site-functionality' );
+		return $columns;
+	}
+
+	/**
+	 * Output the approval status badge for each member row in the Members List.
+	 * 
+	 * @since 1.0.4
+	 *
+	 * @param string $column_name The current column name.
+	 * @param int    $user_id     The current user's ID.
+	 * @param array  $item        The membership data for the current row.
+	 * @return void
+	 */
+	public function approval_col_body( string $column_name, int $user_id, $item ): void {
+		if ( 'approval_status' !== $column_name ) {
+			return;
+		}
+
+		$level_id = isset( $item['membership_id'] ) ? (int) $item['membership_id'] : 0;
+
+		if ( empty( $level_id ) ) {
+			return;
+		}
+
+		if ( ! \PMPro_Approvals::requiresApproval( $level_id ) ) {
+			echo '<span style="color:var(--pmpro--color--almost-black);opacity:0.4;font-size:11px;">' . esc_html__( 'N/A', 'site-functionality' ) . '</span>';
+			return;
+		}
+
+		if ( \PMPro_Approvals::isApproved( $user_id, $level_id ) ) {
+			$status = 'approved';
+		} elseif ( \PMPro_Approvals::isPending( $user_id, $level_id ) ) {
+			$status = 'pending';
+		} else {
+			$status = 'denied';
+		}
+
+		$labels = array(
+			'pending'  => __( 'Pending', 'site-functionality' ),
+			'approved' => __( 'Approved', 'site-functionality' ),
+			'denied'   => __( 'Denied', 'site-functionality' ),
+		);
+
+		$bg_colors = array(
+			'pending'  => 'var(--pmpro--color--alert-background)',
+			'approved' => 'var(--pmpro--color--success-background)',
+			'denied'   => 'var(--pmpro--color--error-background)',
+		);
+
+		$text_colors = array(
+			'pending'  => 'var(--pmpro--color--alert-text)',
+			'approved' => 'var(--pmpro--color--success-text)',
+			'denied'   => 'var(--pmpro--color--error-text)',
+		);
+
+		$label      = isset( $labels[ $status ] ) ? $labels[ $status ] : esc_html( $status );
+		$bg_color   = isset( $bg_colors[ $status ] ) ? $bg_colors[ $status ] : 'var(--pmpro--color--almost-black)';
+		$text_color = isset( $text_colors[ $status ] ) ? $text_colors[ $status ] : 'var(--pmpro--color--almost-black)';
+
+		printf(
+			'<span style="display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;color:%s;background:%s;">%s</span>',
+			esc_attr( $text_color ),
+			esc_attr( $bg_color ),
+			esc_html( $label )
+		);
+	}
 }
