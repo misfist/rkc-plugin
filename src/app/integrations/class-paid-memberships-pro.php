@@ -127,10 +127,19 @@ class Paid_Memberships_Pro extends Base {
 			\add_action( 'pmpro_approvals_after_reset_member', array( $this, 'after_reset_member' ), '', 2 );
 		}
 
+		/**
+		 * Members List
+		 */
+		add_action( 'pmpro_memberslist_extra_tablenav', array( $this, 'add_members_list_filter_options' ) );
+		add_filter( 'pmpro_members_list_sql', array( $this, 'members_list_filter_sql' ) );
+		add_filter( 'pmpro_members_list_user', array( $this, 'filter_pending_from_active' ) );
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_members_list_scripts' ) );
+
 		if ( class_exists( '\PMPro_Approvals' ) ) {
 			/**
 			 * @see https://www.paidmembershipspro.com/add-ons/approval-process-membership/
-			 * 
+			 *
 			 * @since 1.0.4
 			 */
 			add_filter( 'pmpro_memberslist_extra_cols', array( $this, 'approval_col_header' ) );
@@ -424,7 +433,149 @@ class Paid_Memberships_Pro extends Base {
 	}
 
 	/**
+	 * Add custom filter options to the members list dropdown.
+	 * 
+	 * @since 1.0.4
+	 *
+	 * @param string $which The position of the nav (top or bottom).
+	 * @return void
+	 */
+	public function add_members_list_filter_options( string $which ): void {
+		if ( 'top' !== $which ) {
+			return;
+		}
+
+		$l = isset( $_REQUEST['l'] ) ? sanitize_text_field( $_REQUEST['l'] ) : false;
+		?>
+			<option value="active" <?php selected( $l, 'active' ); ?>><?php esc_html_e( 'Active Members', 'site-functionality' ); ?></option>
+			<option value="paid" <?php selected( $l, 'paid' ); ?>><?php esc_html_e( 'Paid Members', 'site-functionality' ); ?></option>
+		<?php
+	}
+
+	/**
+	 * Filter the members list SQL for custom active and paid filters.
+	 * 
+	 * @since 1.0.4
+	 *
+	 * @param string $sql The SQL query.
+	 * @return string
+	 */
+	public function members_list_filter_sql( string $sql ): string {
+		$l = isset( $_REQUEST['l'] ) ? sanitize_text_field( $_REQUEST['l'] ) : false;
+
+		if ( 'active' !== $l && 'paid' !== $l ) {
+			return $sql;
+		}
+
+		global $wpdb;
+
+		// Fix the members list table query which casts our $l value to 0.
+		$sql = str_replace( "AND mu.status = 'active' AND mu.membership_id = '0'", "AND mu.status = 'active'", $sql );
+
+		$approval_levels = \PMPro_Approvals::getApprovalLevels();
+
+		$extra = '';
+
+		if ( 'paid' === $l ) {
+			$extra .= ' AND ( m.initial_payment > 0 OR m.billing_amount > 0 ) ';
+		}
+
+		if ( ! empty( $approval_levels ) ) {
+			$extra .= " AND NOT EXISTS (
+            SELECT 1 FROM {$wpdb->usermeta} um
+            WHERE um.user_id = u.ID
+            AND um.meta_key = CONCAT( 'pmpro_approval_', mu.membership_id )
+            AND um.meta_value LIKE '%\"pending\"%'
+        ) ";
+		}
+
+		if ( ! empty( $extra ) ) {
+			if ( strpos( $sql, ' GROUP BY' ) !== false ) {
+				// Members list table query.
+				$sql = str_replace( ' GROUP BY', $extra . ' GROUP BY', $sql );
+			} elseif ( strpos( $sql, 'ORDER BY' ) !== false ) {
+				// CSV export query.
+				$sql = str_replace( 'ORDER BY', $extra . 'ORDER BY', $sql );
+			} else {
+				// COUNT query — append at the end.
+				$sql .= $extra;
+			}
+		}
+
+		return $sql;
+	}
+
+	/**
+	 * Remove pending members from the Active and Paid Members list filters.
+	 * 
+	 * @since 1.0.4
+	 *
+	 * @param object $user The current user object.
+	 * @return object|false The user object or false to exclude.
+	 */
+	public function filter_pending_from_active( $user ) {
+		$l = isset( $_REQUEST['l'] ) ? sanitize_text_field( $_REQUEST['l'] ) : false;
+
+		if ( 'active' !== $l && 'paid' !== $l ) {
+			return $user;
+		}
+
+		$level_id = isset( $user->membership_id ) ? (int) $user->membership_id : 0;
+
+		if ( empty( $level_id ) ) {
+			return $user;
+		}
+
+		if ( class_exists( '\PMPro_Approvals' ) && ! \PMPro_Approvals::requiresApproval( $level_id ) ) {
+			return $user;
+		}
+
+		if ( class_exists( '\PMPro_Approvals' ) && \PMPro_Approvals::isPending( $user->ID, $level_id ) ) {
+			return false;
+		}
+
+		return $user;
+	}
+
+	/**
+	 * Enqueue scripts for the members list page.
+	 * 
+	 * @since 1.0.4
+	 *
+	 * @param string $hook The current admin page hook.
+	 * @return void
+	 */
+	public function enqueue_members_list_scripts( string $hook ): void {
+		if ( 'memberships_page_pmpro-memberslist' !== $hook ) {
+			return;
+		}
+
+		$l = isset( $_REQUEST['l'] ) ? sanitize_text_field( $_REQUEST['l'] ) : '';
+
+		wp_add_inline_script(
+			'jquery',
+			sprintf(
+				'(function($){
+                $(function(){
+                    var $select = $("select[name=\'l\']");
+                    $select.append(
+                        $("<option>", { value: "active", text: %s, selected: %s }),
+                        $("<option>", { value: "paid",   text: %s, selected: %s })
+                    );
+                });
+            })(jQuery);',
+				wp_json_encode( __( 'Active Members', 'site-functionality' ) ),
+				wp_json_encode( 'active' === $l ),
+				wp_json_encode( __( 'Paid Members', 'site-functionality' ) ),
+				wp_json_encode( 'paid' === $l )
+			)
+		);
+	}
+
+	/**
 	 * Add an "Approval Status" column header to the PMPro Members List.
+	 * 
+	 * @since 1.0.4
 	 *
 	 * @param array $columns Existing extra columns.
 	 * @return array
@@ -436,7 +587,7 @@ class Paid_Memberships_Pro extends Base {
 
 	/**
 	 * Output the approval status badge for each member row in the Members List.
-	 * 
+	 *
 	 * @since 1.0.4
 	 *
 	 * @param string $column_name The current column name.
